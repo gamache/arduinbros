@@ -39,9 +39,9 @@ byte _row=0, _col=0;   // current text position
 #define newline _row++; _col=0; _rainbow++;
 #define origin  _row=0; _col=0; _rainbow++;
 
-// macros to pack R, G, B data into two bytes, gb and gb
-#define rg(R,G,B) (((R) & 0x1f)<<3 | (((G)>>3) & 0x07))
-#define gb(R,G,B) (((G) & 0x07)<<5 | ((B) & 0x1f))
+// macros to pack byte R, G, B data into two bytes, rg and gb
+#define rg(R,G,B) (((R) & 0xf8) | ((G) >> 5))
+#define gb(R,G,B) (((G) << 3) | ((B) >> 3))
 
 // this macro handles the ack byte returned by the GOLDELOX.
 // returns 1 on success (ACK), 0 on error (NAK)
