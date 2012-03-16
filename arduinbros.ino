@@ -1,4 +1,4 @@
-/* rainbros.ino
+/* arduinbros.ino
    a port of rainbros (dicks + lolcat) for the Arduino and GOLDELOX display
    march 2012  pete gamache  pete@#$!@#gamache.org
     ,
