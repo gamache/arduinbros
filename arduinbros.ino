@@ -45,8 +45,9 @@ int _rainbow = 0; // starting offset from RED for first char of a line
 #define NCOLS 16
 #define BGCOLOR 0,0,0
 byte _row=0, _col=0;   // current text cursor position
-#define newline _row++; _col=0; _rainbow = ++_rainbow % 7;
-#define origin  _row=0; _col=0; _rainbow = ++_rainbow % 7;
+#define advance_rainbow  if (_rainbow==6) _rainbow=0; else _rainbow++;
+#define newline _row++; _col=0; advance_rainbow;
+#define origin  _row=0; _col=0; advance_rainbow;
 
 // macros to pack byte R, G, B data into two bytes, rg and gb
 #define rg(R,G,B) (((R) & 0xf8) | ((G) >> 5))
