@@ -11,17 +11,25 @@
 byte received_byte;
 
 // dicks
-char *dicks[8] = {
-  " 8===D",
-  " 8=====D",
-  " 8======D",
-  " 8=======D",
-  " 8========D",
-  " 8==========D",
-  " 8============D",
-  " 8==============D"
+char *dicks[16] = {
+  "8D",              // idx = 0, len = 2.  CHOAD.
+  "8=D",
+  "8==D",
+  "8===D",
+  "8====D",
+  "8=====D",
+  "8======D",
+  "8=======D",
+  "8========D",
+  "8=========D",
+  "8==========D",
+  "8===========D",
+  "8============D",
+  "8=============D",
+  "8==============D",
+  "8===============D" // idx = 15, len = 17. SWANGIN.
 };
-#define dickfor(N) dicks[(N) & 0x7]
+#define dickfor(N) dicks[(N) & 0xF]
 
 // here we define our sequence of rainbow colors
 byte rainbow_r[7] = {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x4B, 0xEE};
@@ -33,8 +41,8 @@ int _rainbow = 0; // starting offset from RED for first char of a line
 
 // GOLDELOX text stuff
 #define FONT 0     // 5x7
-#define MAXROW 8
-#define MAXCOL 20
+#define NROWS 8
+#define NCOLS 16
 #define BGCOLOR 0,0,0
 byte _row=0, _col=0;   // current text cursor position
 #define newline _row++; _col=0; _rainbow = ++_rainbow % 7;
@@ -55,7 +63,7 @@ byte _row=0, _col=0;   // current text cursor position
 int drawChar(char c, byte r, byte g, byte b) {
   Serial.write(0x54);
   Serial.write(c);
-  if (_col >= MAXCOL) { newline; }
+  if (_col >= NCOLS) { newline; }
   Serial.write(_col++);
   Serial.write(_row);
   Serial.write(rg(r,g,b));
@@ -78,8 +86,8 @@ void drawString(char *str) {
 
 // draw a screenful of dicks
 void drawDicks() {
-  for (int row=0; row < MAXROW; row++) {
-    drawString(dickfor(random(0,7))); 
+  for (int row=0; row < NROWS; row++) {
+    drawString(dickfor(random(0,15))); 
   }
 }
 
