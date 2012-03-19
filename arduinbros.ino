@@ -80,7 +80,7 @@ void drawString(char *str) {
 
   while (*str) {
     drawChar(*str++, rainbow_rgb(color));
-    if (++color == 7) color = 0; // like color = ++color % 7, but cheaper
+    if (color == 6) color = 0; else color++;
   }
   newline;
 }
