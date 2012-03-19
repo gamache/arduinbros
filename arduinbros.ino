@@ -7,8 +7,6 @@
 
 
 // pins and byte buffer
-#define RX  0
-#define TX  1
 #define LED 13
 byte received_byte;
 
@@ -30,14 +28,17 @@ byte rainbow_r[7] = {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x4B, 0xEE};
 byte rainbow_g[7] = {0x00, 0xA5, 0xFF, 0xFF, 0x00, 0x00, 0x82};
 byte rainbow_b[7] = {0x00, 0x00, 0x00, 0x00, 0xFF, 0x82, 0xEE};
 int _rainbow = 0; // starting offset from RED for first char of a line
+// rainbow_rgb returns the r, g, b bytes for the rainbow color N=0..6
+#define rainbow_rgb(N) rainbow_r[(N)], rainbow_g[(N)], rainbow_b[(N)]
 
 // GOLDELOX text stuff
 #define FONT 0     // 5x7
 #define MAXROW 8
 #define MAXCOL 20
-byte _row=0, _col=0;   // current text position
-#define newline _row++; _col=0; _rainbow++;
-#define origin  _row=0; _col=0; _rainbow++;
+#define BGCOLOR 0,0,0
+byte _row=0, _col=0;   // current text cursor position
+#define newline _row++; _col=0; _rainbow = ++_rainbow % 7;
+#define origin  _row=0; _col=0; _rainbow = ++_rainbow % 7;
 
 // macros to pack byte R, G, B data into two bytes, rg and gb
 #define rg(R,G,B) (((R) & 0xf8) | ((G) >> 5))
@@ -65,13 +66,12 @@ int drawChar(char c, byte r, byte g, byte b) {
 // drawString prints an ASCII string at the current position, with newline.
 // Color is in a rainbow fashion, a la lolcat.
 void drawString(char *str) {
-  char c;
   int color;
   color = _rainbow;
 
-  while (c = *str++) {
-    drawChar(c, rainbow_r[color], rainbow_g[color], rainbow_b[color]);
-    color = (color + 1) % 7;
+  while (*str) {
+    drawChar(*str++, rainbow_rgb(color));
+    if (++color == 7) color = 0; // like color = ++color % 7, but cheaper
   }
   newline;
 }
@@ -83,7 +83,7 @@ void drawDicks() {
   }
 }
 
-// set the screen font (yup)
+// sets the screen font (yup)
 int setFont(byte f) {
   Serial.write(0x46);
   Serial.write(f);
@@ -98,7 +98,9 @@ int setBg(int r, int g, int b) {
   handle_ack;
 }
 
-int clear_screen() {
+// clears the screen and moves text cursor to origin
+int clearScreen() {
+  origin;
   Serial.write(0x45);
   handle_ack;
 }
@@ -127,14 +129,13 @@ void setup() {
   }
   
   setFont(FONT);
+  setBg(BGCOLOR);
 }
 
 void loop() {
-  setBg(0, 0, 0);
   drawDicks();
   delay(2500);
-  clear_screen();
-  origin;
+  clearScreen();
 }
 
 
